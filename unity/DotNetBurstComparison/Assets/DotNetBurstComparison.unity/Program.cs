@@ -9,7 +9,10 @@ namespace DotNetBurstComparison.unity {
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         private static void Main() {
             PerformTests(new Func<IBenchmark>[] {
-                () => new ArrayCopy(),
+                () => new LoopVectorization(),
+                () => new Fibonacci(),
+                () => new Mandelbrot(),
+                () => new SieveOfEratosthenes(),
             });
         }
 
@@ -84,8 +87,12 @@ namespace DotNetBurstComparison.unity {
 
         public override string ToString() {
             return $"{TestName}\n" +
-                   $"    Non-Burst: {ElapsedTimeNonBurstInitial.Ticks} | {ElapsedTimeNonBurst.Ticks}\n" +
-                   $"    Burst: {ElapsedTimeBurstInitial.Ticks} | {ElapsedTimeBurst.Ticks}";
+                   $"    Non-Burst: {FormatTimeSpan(ElapsedTimeNonBurstInitial)} | {FormatTimeSpan(ElapsedTimeNonBurst)}\n" +
+                   $"    Burst: {FormatTimeSpan(ElapsedTimeBurstInitial)} | {FormatTimeSpan(ElapsedTimeBurst)}";
+        }
+
+        private static string FormatTimeSpan(TimeSpan duration) {
+            return duration.Ticks.ToString("N0");
         }
     }
 }
