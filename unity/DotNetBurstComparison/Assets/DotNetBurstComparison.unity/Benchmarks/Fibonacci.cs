@@ -7,7 +7,7 @@ namespace DotNetBurstComparison.Unity.Benchmarks {
     /// Shamelessly borrowed: https://github.com/nxrighthere/BurstBenchmarks
     /// </summary>
     public sealed class Fibonacci : IBenchmark {
-        private const uint Number = 38; // 46
+        private const uint Number = 46; // 46
 
         public Fibonacci() {
             // do nothing

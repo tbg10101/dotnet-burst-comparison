@@ -7,11 +7,11 @@ using UnityEngine;
 
 namespace DotNetBurstComparison.Unity.Benchmarks {
     /// <summary>
-    /// This is supposed to test vector multiplication.
-    /// https://docs.unity3d.com/Packages/com.unity.mathematics@1.3/manual/vector-multiplication.html
+    /// This is supposed to test a real-world ECS use-case where velocity multiplied by a time delta is added to positions.
     /// </summary>
-    public sealed class VectorMultiplication: IBenchmark {
+    public sealed class Velocity: IBenchmark {
         private const int ArrayLength = 1_000_000; // 1_000_000
+        private const float TimeDelta = 0.033f;
 
         private readonly Vector4[] _vectorArrayA = new Vector4[ArrayLength];
         private readonly Vector4[] _vectorArrayB = new Vector4[ArrayLength];
@@ -19,7 +19,7 @@ namespace DotNetBurstComparison.Unity.Benchmarks {
         private readonly NativeArray<float4> _vectorNativeArrayA = new(ArrayLength, Allocator.Persistent);
         private readonly NativeArray<float4> _vectorNativeArrayB = new(ArrayLength, Allocator.Persistent);
 
-        public VectorMultiplication() {
+        public Velocity() {
             NativeArray<float4> nativeArrayA = _vectorNativeArrayA;
             NativeArray<float4> nativeArrayB = _vectorNativeArrayB;
 
@@ -53,10 +53,7 @@ namespace DotNetBurstComparison.Unity.Benchmarks {
             Vector4[] b = _vectorArrayB;
 
             for (int i = 0; i < ArrayLength; i++) {
-                Vector4 vA = a[i];
-                Vector4 vB = b[i];
-
-                a[i] = new Vector4(vA.x * vB.x, vA.y * vB.y, vA.z * vB.z, vA.w * vB.w);
+                a[i] += TimeDelta * b[i];
             }
         }
 
@@ -84,7 +81,7 @@ namespace DotNetBurstComparison.Unity.Benchmarks {
                 int length = A.Length;
 
                 for (int i = 0; i < length; i++) {
-                    A[i] *= B[i];
+                    A[i] += TimeDelta * B[i];
                 }
             }
         }

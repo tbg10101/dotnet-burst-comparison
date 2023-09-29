@@ -1,4 +1,3 @@
-using System;
 using System.Runtime.CompilerServices;
 using Unity.Burst;
 using Unity.Collections;
@@ -24,17 +23,18 @@ namespace DotNetBurstComparison.Unity.Benchmarks {
             NativeArray<float4x4> nativeArrayA = _vectorNativeArrayA;
             NativeArray<float4x4> nativeArrayB = _vectorNativeArrayB;
 
-            for (int i = 0; i < ArrayLength; i++) { // TODO
+            float3 axis = new(0.0f, 1.0f, 0.0f);
+
+            for (int i = 0; i < ArrayLength; i++) {
                 _vectorArrayA[i] = nativeArrayA[i] = float4x4.TRS(
-                    new float3(),
-                    new quaternion(),
-                    new float3()
+                    new float3(math.sin(3 * i + 0), math.sin(3 * i + 1), math.sin(3 * i + 2)),
+                    quaternion.AxisAngle(axis, i % 2.0f * math.PI),
+                    new float3(1.0f, 1.0f, 1.0f)
                 );
-                _vectorArrayB[i] = nativeArrayB[i] = new float4x4(
-                    (float)Math.Cos(4 * i + 0),
-                    (float)Math.Cos(4 * i + 1),
-                    (float)Math.Cos(4 * i + 2),
-                    (float)Math.Cos(4 * i + 3)
+                _vectorArrayB[i] = nativeArrayB[i] = float4x4.TRS(
+                    new float3(math.cos(3 * i + 0), math.cos(3 * i + 1), math.cos(3 * i + 2)),
+                    quaternion.AxisAngle(axis, i % 2.0f * math.PI),
+                    new float3(1.0f, 1.0f, 1.0f)
                 );
             }
         }
@@ -78,7 +78,9 @@ namespace DotNetBurstComparison.Unity.Benchmarks {
             public NativeArray<float4x4> B;
 
             public void Execute() {
-                for (int i = 0; i < A.Length; i++) {
+                int length = A.Length;
+
+                for (int i = 0; i < length; i++) {
                     A[i] *= B[i];
                 }
             }

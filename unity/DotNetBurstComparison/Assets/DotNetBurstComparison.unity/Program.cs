@@ -17,6 +17,7 @@ namespace DotNetBurstComparison.Unity {
                 () => new VectorMultiplication(),
                 () => new QuaternionMultiplication(),
                 () => new MatrixMultiplication(),
+                () => new Velocity(),
             });
         }
 

@@ -26,8 +26,8 @@ namespace DotNetBurstComparison.Unity.Benchmarks {
             float3 axis = new(0.0f, 1.0f, 0.0f);
 
             for (int i = 0; i < ArrayLength; i++) {
-                _quaternionArrayA[i] = nativeArrayA[i] = quaternion.AxisAngle(axis, i % 360);
-                _quaternionArrayB[i] = nativeArrayB[i] = quaternion.AxisAngle(axis, (i + 45) % 360);
+                _quaternionArrayA[i] = nativeArrayA[i] = quaternion.AxisAngle(axis, i % 2.0f * math.PI);
+                _quaternionArrayB[i] = nativeArrayB[i] = quaternion.AxisAngle(axis, (i + 0.125f * math.PI) % 2.0f * math.PI);
             }
         }
 
@@ -70,7 +70,9 @@ namespace DotNetBurstComparison.Unity.Benchmarks {
             public NativeArray<quaternion> B;
 
             public void Execute() {
-                for (int i = 0; i < A.Length; i++) {
+                int length = A.Length;
+
+                for (int i = 0; i < length; i++) {
                     A[i] = math.mul(A[i], B[i]);
                 }
             }

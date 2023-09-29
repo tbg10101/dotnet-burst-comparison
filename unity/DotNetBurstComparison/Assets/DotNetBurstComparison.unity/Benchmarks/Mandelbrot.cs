@@ -11,7 +11,7 @@ namespace DotNetBurstComparison.Unity.Benchmarks {
     public sealed class Mandelbrot : IBenchmark {
         private const uint Width = 1920;
         private const uint Height = 1080;
-        private const uint Iterations = 1; // 8
+        private const uint Iterations = 8; // 8
 
         public Mandelbrot() {
             // do nothing
