@@ -4,7 +4,7 @@ using Unity.Burst;
 using Unity.Collections;
 using Unity.Jobs;
 
-namespace DotNetBurstComparison.unity {
+namespace DotNetBurstComparison.Unity.Benchmarks {
     /// <summary>
     /// This is supposed to test loop vectorization.
     /// https://docs.unity3d.com/Packages/com.unity.burst@1.8/manual/optimization-loop-vectorization.html

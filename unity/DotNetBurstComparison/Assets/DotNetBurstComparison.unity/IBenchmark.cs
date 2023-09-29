@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace DotNetBurstComparison.unity {
+namespace DotNetBurstComparison.Unity {
     public interface IBenchmark: IDisposable {
         void RunNonBurst();
         void RunBurst();

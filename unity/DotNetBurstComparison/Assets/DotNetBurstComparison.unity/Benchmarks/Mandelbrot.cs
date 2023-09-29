@@ -4,7 +4,7 @@ using Unity.Burst;
 using Unity.Jobs;
 using Unity.Mathematics;
 
-namespace DotNetBurstComparison.unity {
+namespace DotNetBurstComparison.Unity.Benchmarks {
     /// <summary>
     /// Shamelessly borrowed: https://github.com/nxrighthere/BurstBenchmarks
     /// </summary>

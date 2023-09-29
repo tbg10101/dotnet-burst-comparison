@@ -1,10 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using DotNetBurstComparison.Unity.Benchmarks;
 using UnityEngine;
 using Debug = UnityEngine.Debug;
 
-namespace DotNetBurstComparison.unity {
+namespace DotNetBurstComparison.Unity {
     public static class Program {
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         private static void Main() {
@@ -13,6 +14,9 @@ namespace DotNetBurstComparison.unity {
                 () => new Fibonacci(),
                 () => new Mandelbrot(),
                 () => new SieveOfEratosthenes(),
+                () => new VectorMultiplication(),
+                () => new QuaternionMultiplication(),
+                () => new MatrixMultiplication(),
             });
         }
 

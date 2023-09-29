@@ -2,7 +2,7 @@
 using Unity.Burst;
 using Unity.Jobs;
 
-namespace DotNetBurstComparison.unity {
+namespace DotNetBurstComparison.Unity.Benchmarks {
     /// <summary>
     /// Shamelessly borrowed: https://github.com/nxrighthere/BurstBenchmarks
     /// </summary>

@@ -2,7 +2,7 @@
 using Unity.Burst;
 using Unity.Jobs;
 
-namespace DotNetBurstComparison.unity {
+namespace DotNetBurstComparison.Unity.Benchmarks {
     public sealed unsafe class SieveOfEratosthenes : IBenchmark {
         private const uint Iterations = 1_000; // 1_000_000
 
