@@ -2,6 +2,9 @@
 
 namespace DotNetBurstComparison.Dotnet.Benchmarks;
 
+/// <summary>
+/// Shamelessly borrowed: https://github.com/nxrighthere/BurstBenchmarks
+/// </summary>
 public sealed unsafe class SieveOfEratosthenes : IBenchmark {
     private const uint Iterations = 1_000_000; // 1_000_000
 

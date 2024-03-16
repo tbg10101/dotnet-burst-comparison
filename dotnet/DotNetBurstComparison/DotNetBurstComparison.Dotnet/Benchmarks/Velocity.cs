@@ -3,6 +3,9 @@ using System.Runtime.CompilerServices;
 
 namespace DotNetBurstComparison.Dotnet.Benchmarks;
 
+/// <summary>
+/// This is supposed to test a real-world ECS use-case where velocity multiplied by a time delta is added to positions.
+/// </summary>
 public sealed class Velocity : IBenchmark {
     private const int ArrayLength = 1_000_000; // 1_000_000
     private const float TimeDelta = 0.033f;
