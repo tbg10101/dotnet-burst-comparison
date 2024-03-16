@@ -1,5 +1,5 @@
 using System.Numerics;
-using System.Runtime.CompilerServices;
+using BenchmarkDotNet.Attributes;
 
 namespace DotNetBurstComparison.Dotnet.Benchmarks;
 
@@ -7,8 +7,10 @@ namespace DotNetBurstComparison.Dotnet.Benchmarks;
 /// This is supposed to test matrix multiplication.
 /// https://docs.unity3d.com/Packages/com.unity.mathematics@1.3/manual/4x4-matrices.html
 /// </summary>
-public sealed class MatrixMultiplication: IBenchmark {
-    private const int ArrayLength = 1_000_000; // 1_000_000
+[SimpleJob]
+[IterationsColumn]
+public class MatrixMultiplication {
+    private const int ArrayLength = 1_000_000;
 
     private readonly Matrix4x4[] _vectorArrayA = new Matrix4x4[ArrayLength];
     private readonly Matrix4x4[] _vectorArrayB = new Matrix4x4[ArrayLength];
@@ -29,11 +31,7 @@ public sealed class MatrixMultiplication: IBenchmark {
         }
     }
 
-    public void Dispose() {
-        // do nothing
-    }
-
-    [MethodImpl(MethodImplOptions.NoInlining)]
+    [Benchmark]
     public void Run() {
         Matrix4x4[] a = _vectorArrayA;
         Matrix4x4[] b = _vectorArrayB;

@@ -1,4 +1,4 @@
-using System.Runtime.CompilerServices;
+using BenchmarkDotNet.Attributes;
 
 namespace DotNetBurstComparison.Dotnet.Benchmarks;
 
@@ -6,8 +6,10 @@ namespace DotNetBurstComparison.Dotnet.Benchmarks;
 /// This is supposed to test loop vectorization.
 /// https://docs.unity3d.com/Packages/com.unity.burst@1.8/manual/optimization-loop-vectorization.html
 /// </summary>
-public sealed class LoopVectorization: IBenchmark {
-    private const int ArrayLength = 1_000_000; // 1_000_000
+[SimpleJob]
+[IterationsColumn]
+public class LoopVectorization {
+    private const int ArrayLength = 1_000_000;
 
     private readonly float[] _floatArrayA = new float[ArrayLength];
     private readonly float[] _floatArrayB = new float[ArrayLength];
@@ -19,11 +21,7 @@ public sealed class LoopVectorization: IBenchmark {
         }
     }
 
-    public void Dispose() {
-        // do nothing
-    }
-
-    [MethodImpl(MethodImplOptions.NoInlining)]
+    [Benchmark]
     public void Run() {
         float[] a = _floatArrayA;
         float[] b = _floatArrayB;

@@ -1,26 +1,26 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System;
+using BenchmarkDotNet.Attributes;
 using Unity.Burst;
 using Unity.Jobs;
 
 namespace DotNetBurstComparison.Unity.Benchmarks {
-    public sealed unsafe class SieveOfEratosthenes : IBenchmark {
-        private const uint Iterations = 1_000_000; // 1_000_000
-
-        public SieveOfEratosthenes() {
-            // do nothing
-        }
-
-        public void Dispose() {
-            // do nothing
-        }
+    /// <summary>
+    /// Shamelessly borrowed: https://github.com/nxrighthere/BurstBenchmarks
+    /// </summary>
+    [SimpleJob]
+    [IterationsColumn]
+    public unsafe class SieveOfEratosthenes {
+        private const uint Iterations = 1_000_000;
 
         [BurstDiscard]
-        [MethodImpl(MethodImplOptions.NoInlining)]
+        [Benchmark]
+        [BenchmarkCategory("NonBurst")]
         public void RunNonBurst() {
-            uint result = DoSieveOfEratosthenes(Iterations);
+            uint _ = DoSieveOfEratosthenes(Iterations);
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
+        [Benchmark]
+        [BenchmarkCategory("Burst")]
         public void RunBurst() {
             SieveOfEratosthenesJob job = new() {
                 Iterations = Iterations
@@ -42,15 +42,14 @@ namespace DotNetBurstComparison.Unity.Benchmarks {
         private static uint DoSieveOfEratosthenes(uint iterations) {
             const int size = 1024;
 
-            byte* flags = stackalloc byte[size];
-            uint a, b, c, prime, count = 0;
+            Span<byte> flags = stackalloc byte[size];
+            uint count = 0;
+            int a, b, c, prime;
 
             for (a = 1; a <= iterations; a++) {
                 count = 0;
 
-                for (b = 0; b < size; b++) {
-                    flags[b] = 1; // True
-                }
+                flags.Fill(1); // True
 
                 for (b = 0; b < size; b++) {
                     if (flags[b] == 1) {

@@ -1,24 +1,18 @@
-﻿using System.Runtime.CompilerServices;
+﻿using BenchmarkDotNet.Attributes;
 
 namespace DotNetBurstComparison.Dotnet.Benchmarks;
 
 /// <summary>
 /// Shamelessly borrowed: https://github.com/nxrighthere/BurstBenchmarks
 /// </summary>
-public sealed class Fibonacci : IBenchmark {
-    private const uint Number = 46; // 46
+[SimpleJob]
+[IterationsColumn]
+public class Fibonacci {
+    private const uint Number = 46;
 
-    public Fibonacci() {
-        // do nothing
-    }
-
-    public void Dispose() {
-        // do nothing
-    }
-
-    [MethodImpl(MethodImplOptions.NoInlining)]
+    [Benchmark]
     public void Run() {
-        uint result = DoFibonacci(Number);
+        uint _ = DoFibonacci(Number);
     }
 
     private static uint DoFibonacci(uint number) {

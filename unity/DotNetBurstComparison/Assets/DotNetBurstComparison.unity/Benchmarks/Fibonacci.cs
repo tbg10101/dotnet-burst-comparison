@@ -1,4 +1,4 @@
-﻿using System.Runtime.CompilerServices;
+﻿using BenchmarkDotNet.Attributes;
 using Unity.Burst;
 using Unity.Jobs;
 
@@ -6,24 +6,20 @@ namespace DotNetBurstComparison.Unity.Benchmarks {
     /// <summary>
     /// Shamelessly borrowed: https://github.com/nxrighthere/BurstBenchmarks
     /// </summary>
-    public sealed class Fibonacci : IBenchmark {
-        private const uint Number = 46; // 46
-
-        public Fibonacci() {
-            // do nothing
-        }
-
-        public void Dispose() {
-            // do nothing
-        }
+    [SimpleJob]
+    [IterationsColumn]
+    public class Fibonacci {
+        private const uint Number = 46;
 
         [BurstDiscard]
-        [MethodImpl(MethodImplOptions.NoInlining)]
+        [Benchmark]
+        [BenchmarkCategory("NonBurst")]
         public void RunNonBurst() {
-            uint result = DoFibonacci(Number);
+            uint _ = DoFibonacci(Number);
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
+        [Benchmark]
+        [BenchmarkCategory("Burst")]
         public void RunBurst() {
             FibonacciJob job = new() {
                 Number = Number

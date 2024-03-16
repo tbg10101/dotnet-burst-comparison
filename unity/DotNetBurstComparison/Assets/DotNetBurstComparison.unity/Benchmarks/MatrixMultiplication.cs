@@ -1,4 +1,4 @@
-using System.Runtime.CompilerServices;
+using BenchmarkDotNet.Attributes;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Jobs;
@@ -10,8 +10,10 @@ namespace DotNetBurstComparison.Unity.Benchmarks {
     /// This is supposed to test matrix multiplication.
     /// https://docs.unity3d.com/Packages/com.unity.mathematics@1.3/manual/4x4-matrices.html
     /// </summary>
-    public sealed class MatrixMultiplication: IBenchmark {
-        private const int ArrayLength = 1_000_000; // 1_000_000
+    [SimpleJob]
+    [IterationsColumn]
+    public class MatrixMultiplication {
+        private const int ArrayLength = 1_000_000;
 
         private readonly Matrix4x4[] _vectorArrayA = new Matrix4x4[ArrayLength];
         private readonly Matrix4x4[] _vectorArrayB = new Matrix4x4[ArrayLength];
@@ -47,7 +49,8 @@ namespace DotNetBurstComparison.Unity.Benchmarks {
         }
 
         [BurstDiscard]
-        [MethodImpl(MethodImplOptions.NoInlining)]
+        [Benchmark]
+        [BenchmarkCategory("NonBurst")]
         public void RunNonBurst() {
             Matrix4x4[] a = _vectorArrayA;
             Matrix4x4[] b = _vectorArrayB;
@@ -57,7 +60,8 @@ namespace DotNetBurstComparison.Unity.Benchmarks {
             }
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
+        [Benchmark]
+        [BenchmarkCategory("Burst")]
         public void RunBurst() {
             NativeArray<float4x4> a = _vectorNativeArrayA;
             NativeArray<float4x4> b = _vectorNativeArrayB;

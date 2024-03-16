@@ -1,4 +1,4 @@
-using System.Runtime.CompilerServices;
+using BenchmarkDotNet.Attributes;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Jobs;
@@ -10,8 +10,10 @@ namespace DotNetBurstComparison.Unity.Benchmarks {
     /// This is supposed to test vector multiplication.
     /// https://docs.unity3d.com/Packages/com.unity.mathematics@1.3/manual/vector-multiplication.html
     /// </summary>
-    public sealed class VectorMultiplication: IBenchmark {
-        private const int ArrayLength = 1_000_000; // 1_000_000
+    [SimpleJob]
+    [IterationsColumn]
+    public class VectorMultiplication {
+        private const int ArrayLength = 1_000_000;
 
         private readonly Vector4[] _vectorArrayA = new Vector4[ArrayLength];
         private readonly Vector4[] _vectorArrayB = new Vector4[ArrayLength];
@@ -47,7 +49,8 @@ namespace DotNetBurstComparison.Unity.Benchmarks {
         }
 
         [BurstDiscard]
-        [MethodImpl(MethodImplOptions.NoInlining)]
+        [Benchmark]
+        [BenchmarkCategory("NonBurst")]
         public void RunNonBurst() {
             Vector4[] a = _vectorArrayA;
             Vector4[] b = _vectorArrayB;
@@ -60,7 +63,8 @@ namespace DotNetBurstComparison.Unity.Benchmarks {
             }
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
+        [Benchmark]
+        [BenchmarkCategory("Burst")]
         public void RunBurst() {
             NativeArray<float4> a = _vectorNativeArrayA;
             NativeArray<float4> b = _vectorNativeArrayB;

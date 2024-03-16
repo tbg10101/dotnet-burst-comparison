@@ -5,5 +5,8 @@
 /Logs
 /Temp
 /.idea
+/.vs
 /UserSettings
 /Builds
+BenchmarkDotNet.Artifacts
+/Assets/Packages

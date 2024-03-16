@@ -1,4 +1,4 @@
-using System.Runtime.CompilerServices;
+using BenchmarkDotNet.Attributes;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Jobs;
@@ -9,8 +9,10 @@ namespace DotNetBurstComparison.Unity.Benchmarks {
     /// <summary>
     /// This is supposed to test a real-world ECS use-case where velocity multiplied by a time delta is added to positions.
     /// </summary>
-    public sealed class Velocity: IBenchmark {
-        private const int ArrayLength = 1_000_000; // 1_000_000
+    [SimpleJob]
+    [IterationsColumn]
+    public class Velocity {
+        private const int ArrayLength = 1_000_000;
         private const float TimeDelta = 0.033f;
 
         private readonly Vector4[] _vectorArrayA = new Vector4[ArrayLength];
@@ -47,7 +49,8 @@ namespace DotNetBurstComparison.Unity.Benchmarks {
         }
 
         [BurstDiscard]
-        [MethodImpl(MethodImplOptions.NoInlining)]
+        [Benchmark]
+        [BenchmarkCategory("NonBurst")]
         public void RunNonBurst() {
             Vector4[] a = _vectorArrayA;
             Vector4[] b = _vectorArrayB;
@@ -57,7 +60,8 @@ namespace DotNetBurstComparison.Unity.Benchmarks {
             }
         }
 
-        [MethodImpl(MethodImplOptions.NoInlining)]
+        [Benchmark]
+        [BenchmarkCategory("Burst")]
         public void RunBurst() {
             NativeArray<float4> a = _vectorNativeArrayA;
             NativeArray<float4> b = _vectorNativeArrayB;

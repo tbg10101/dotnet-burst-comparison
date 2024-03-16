@@ -1,5 +1,5 @@
 using System.Numerics;
-using System.Runtime.CompilerServices;
+using BenchmarkDotNet.Attributes;
 
 namespace DotNetBurstComparison.Dotnet.Benchmarks;
 
@@ -7,8 +7,10 @@ namespace DotNetBurstComparison.Dotnet.Benchmarks;
 /// This is supposed to test vector multiplication.
 /// https://docs.unity3d.com/Packages/com.unity.mathematics@1.3/manual/vector-multiplication.html
 /// </summary>
-public sealed class VectorMultiplication: IBenchmark {
-    private const int ArrayLength = 1_000_000; // 1_000_000
+[SimpleJob]
+[IterationsColumn]
+public class VectorMultiplication {
+    private const int ArrayLength = 1_000_000;
 
     private readonly Vector4[] _vectorArrayA = new Vector4[ArrayLength];
     private readonly Vector4[] _vectorArrayB = new Vector4[ArrayLength];
@@ -30,11 +32,7 @@ public sealed class VectorMultiplication: IBenchmark {
         }
     }
 
-    public void Dispose() {
-        // do nothing
-    }
-
-    [MethodImpl(MethodImplOptions.NoInlining)]
+    [Benchmark]
     public void Run() {
         Vector4[] a = _vectorArrayA;
         Vector4[] b = _vectorArrayB;
