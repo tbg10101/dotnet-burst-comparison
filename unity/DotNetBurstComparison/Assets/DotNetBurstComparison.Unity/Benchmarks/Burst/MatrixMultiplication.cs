@@ -1,20 +1,17 @@
 using System.Runtime.CompilerServices;
+using DotNetBurstComparison.Runner;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
-using UnityEngine;
 
-namespace DotNetBurstComparison.Unity.Benchmarks {
+namespace DotNetBurstComparison.Unity.Benchmarks.Burst {
     /// <summary>
     /// This is supposed to test matrix multiplication.
     /// https://docs.unity3d.com/Packages/com.unity.mathematics@1.3/manual/4x4-matrices.html
     /// </summary>
-    public sealed class MatrixMultiplication: IBenchmark {
-        private const int ArrayLength = 1_000_000; // 1_000_000
-
-        private readonly Matrix4x4[] _vectorArrayA = new Matrix4x4[ArrayLength];
-        private readonly Matrix4x4[] _vectorArrayB = new Matrix4x4[ArrayLength];
+    public sealed class MatrixMultiplication : IBenchmark {
+        private const int ArrayLength = 1_000_000;
 
         private readonly NativeArray<float4x4> _vectorNativeArrayA = new(ArrayLength, Allocator.Persistent);
         private readonly NativeArray<float4x4> _vectorNativeArrayB = new(ArrayLength, Allocator.Persistent);
@@ -26,12 +23,12 @@ namespace DotNetBurstComparison.Unity.Benchmarks {
             float3 axis = new(0.0f, 1.0f, 0.0f);
 
             for (int i = 0; i < ArrayLength; i++) {
-                _vectorArrayA[i] = nativeArrayA[i] = float4x4.TRS(
+                nativeArrayA[i] = float4x4.TRS(
                     new float3(math.sin(3 * i + 0), math.sin(3 * i + 1), math.sin(3 * i + 2)),
                     quaternion.AxisAngle(axis, i % 2.0f * math.PI),
                     new float3(1.0f, 1.0f, 1.0f)
                 );
-                _vectorArrayB[i] = nativeArrayB[i] = float4x4.TRS(
+                nativeArrayB[i] = float4x4.TRS(
                     new float3(math.cos(3 * i + 0), math.cos(3 * i + 1), math.cos(3 * i + 2)),
                     quaternion.AxisAngle(axis, i % 2.0f * math.PI),
                     new float3(1.0f, 1.0f, 1.0f)
@@ -46,19 +43,8 @@ namespace DotNetBurstComparison.Unity.Benchmarks {
             // ReSharper enable PossiblyImpureMethodCallOnReadonlyVariable
         }
 
-        [BurstDiscard]
         [MethodImpl(MethodImplOptions.NoInlining)]
-        public void RunNonBurst() {
-            Matrix4x4[] a = _vectorArrayA;
-            Matrix4x4[] b = _vectorArrayB;
-
-            for (int i = 0; i < ArrayLength; i++) {
-                a[i] *= b[i];
-            }
-        }
-
-        [MethodImpl(MethodImplOptions.NoInlining)]
-        public void RunBurst() {
+        public Result Run() {
             NativeArray<float4x4> a = _vectorNativeArrayA;
             NativeArray<float4x4> b = _vectorNativeArrayB;
 
@@ -68,6 +54,8 @@ namespace DotNetBurstComparison.Unity.Benchmarks {
             };
 
             job.Schedule().Complete();
+
+            return default;
         }
 
         [BurstCompile]

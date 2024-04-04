@@ -1,20 +1,17 @@
 using System.Runtime.CompilerServices;
+using DotNetBurstComparison.Runner;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
-using UnityEngine;
 
-namespace DotNetBurstComparison.Unity.Benchmarks {
+namespace DotNetBurstComparison.Unity.Benchmarks.Burst {
     /// <summary>
     /// This is supposed to test quaternion multiplication.
     /// https://docs.unity3d.com/Packages/com.unity.mathematics@1.3/manual/quaternion-multiplication.html
     /// </summary>
-    public sealed class QuaternionMultiplication: IBenchmark {
-        private const int ArrayLength = 1_000_000; // 1_000_000
-
-        private readonly Quaternion[] _quaternionArrayA = new Quaternion[ArrayLength];
-        private readonly Quaternion[] _quaternionArrayB = new Quaternion[ArrayLength];
+    public sealed class QuaternionMultiplication : IBenchmark {
+        private const int ArrayLength = 1_000_000;
 
         private readonly NativeArray<quaternion> _quaternionNativeArrayA = new(ArrayLength, Allocator.Persistent);
         private readonly NativeArray<quaternion> _quaternionNativeArrayB = new(ArrayLength, Allocator.Persistent);
@@ -26,8 +23,8 @@ namespace DotNetBurstComparison.Unity.Benchmarks {
             float3 axis = new(0.0f, 1.0f, 0.0f);
 
             for (int i = 0; i < ArrayLength; i++) {
-                _quaternionArrayA[i] = nativeArrayA[i] = quaternion.AxisAngle(axis, i % 2.0f * math.PI);
-                _quaternionArrayB[i] = nativeArrayB[i] = quaternion.AxisAngle(axis, (i + 0.125f * math.PI) % 2.0f * math.PI);
+                nativeArrayA[i] = quaternion.AxisAngle(axis, i % 2.0f * math.PI);
+                nativeArrayB[i] = quaternion.AxisAngle(axis, (i + 0.125f * math.PI) % 2.0f * math.PI);
             }
         }
 
@@ -38,19 +35,8 @@ namespace DotNetBurstComparison.Unity.Benchmarks {
             // ReSharper enable PossiblyImpureMethodCallOnReadonlyVariable
         }
 
-        [BurstDiscard]
         [MethodImpl(MethodImplOptions.NoInlining)]
-        public void RunNonBurst() {
-            Quaternion[] a = _quaternionArrayA;
-            Quaternion[] b = _quaternionArrayB;
-
-            for (int i = 0; i < ArrayLength; i++) {
-                a[i] *= b[i];
-            }
-        }
-
-        [MethodImpl(MethodImplOptions.NoInlining)]
-        public void RunBurst() {
+        public Result Run() {
             NativeArray<quaternion> a = _quaternionNativeArrayA;
             NativeArray<quaternion> b = _quaternionNativeArrayB;
 
@@ -60,6 +46,8 @@ namespace DotNetBurstComparison.Unity.Benchmarks {
             };
 
             job.Schedule().Complete();
+
+            return default;
         }
 
         [BurstCompile]

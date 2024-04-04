@@ -2,7 +2,17 @@
 
 ## What Is?
 
-This is a collection of benchmarks implemented in various .NET environments: .NET, Unity's default runtime (Mono), IL2CPP, and Burst. In particular this focuses on loop vectorization and math. Two of the benchmarks (Fibonacci, SieveOfEratosthenes, Mandelbrot) are from [BurstBenchmarks](https://github.com/nxrighthere/BurstBenchmarks). All benchmarks use the recommended types for each platform (`UnityEngine.*` for non-Burst Unity, `Unity.Mathematics.*` for Burst, and `System.Numerics.*` for plain .NET) including the benchmarks ported from BurstBenchmarks. All these tests are single-threaded.
+This is a collection of benchmarks implemented in various .NET environments: .NET, Unity's default runtime (Mono), IL2CPP, and Burst. In particular this focuses on loop vectorization and math. Three of the benchmarks (Fibonacci, SieveOfEratosthenes, Mandelbrot) are from [BurstBenchmarks](https://github.com/nxrighthere/BurstBenchmarks). All benchmarks use the recommended types for each platform (`UnityEngine.*` for non-Burst Unity, `Unity.Mathematics.*` for Burst, and `System.Numerics.*` for plain .NET) including the benchmarks ported from BurstBenchmarks. All benchmarks are single-threaded.
+
+Each benchmark is run in phases:
+* Overhead Warmup
+* Overhead Measurement
+* Benchmark Warmup
+* Benchmark Measurement
+
+The result reported is the average Benchmark Measurement minus the average Overhead Measurement.
+
+This is meant to replicate the behavior of BenchmarkDotNet. BenchmarkDotNet is not used because it cannot be easily used with Unity. (as of the time of writing)
 
 ## How To?
 
@@ -12,10 +22,12 @@ All commands are executed from the repository root.
 
 ### Unity Project
 
+Download the version of unity specified in `unity\DotNetBurstComparison\ProjectSettings\ProjectVersion.txt`. Don't forget to also install the IL2CPP module.
+
 Build the Unity project by opening the Unity project and use the Build > Windows menu item or this command:
 
 ```
-"C:\Program Files\Unity\Hub\Editor\2023.1.13f1\Editor\Unity.exe" -batchmode -nographics -quit -projectPath unity\DotNetBurstComparison -executeMethod Editor.Build.BuildWindows -logfile unity\DotNetBurstComparison\Builds\Windows\log.txt
+"C:\Program Files\Unity\Hub\Editor\2023.2.16f1\Editor\Unity.exe" -batchmode -nographics -quit -projectPath unity\DotNetBurstComparison -executeMethod Editor.Build.BuildWindows -logfile unity\DotNetBurstComparison\Builds\Windows\log.txt
 ```
 
 To run the Mono Unity program:
@@ -50,7 +62,7 @@ The results will be printed to standard out.
 
 ## Results
 
-Each benchmark is run twice to let each runtime warm up. These results are from the second run. Smaller values are better.
+Smaller values are better in the graphs below.
 
 ![LoopVectorization](images/LoopVectorization.png)
 

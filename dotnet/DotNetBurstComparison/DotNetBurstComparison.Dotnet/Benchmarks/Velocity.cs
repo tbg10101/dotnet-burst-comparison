@@ -1,5 +1,6 @@
 ﻿using System.Numerics;
 using System.Runtime.CompilerServices;
+using DotNetBurstComparison.Runner;
 
 namespace DotNetBurstComparison.Dotnet.Benchmarks;
 
@@ -7,7 +8,7 @@ namespace DotNetBurstComparison.Dotnet.Benchmarks;
 /// This is supposed to test a real-world ECS use-case where velocity multiplied by a time delta is added to positions.
 /// </summary>
 public sealed class Velocity : IBenchmark {
-    private const int ArrayLength = 1_000_000; // 1_000_000
+    private const int ArrayLength = 1_000_000;
     private const float TimeDelta = 0.033f;
 
     private readonly Vector4[] _vectorArrayA = new Vector4[ArrayLength];
@@ -35,12 +36,14 @@ public sealed class Velocity : IBenchmark {
     }
 
     [MethodImpl(MethodImplOptions.NoInlining)]
-    public void Run() {
+    public Result Run() {
         Vector4[] a = _vectorArrayA;
         Vector4[] b = _vectorArrayB;
 
         for (int i = 0; i < ArrayLength; i++) {
             a[i] += TimeDelta * b[i];
         }
+
+        return default;
     }
 }

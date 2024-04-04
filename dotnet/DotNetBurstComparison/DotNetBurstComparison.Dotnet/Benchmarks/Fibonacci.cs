@@ -1,4 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
+using DotNetBurstComparison.Runner;
 
 namespace DotNetBurstComparison.Dotnet.Benchmarks;
 
@@ -6,7 +7,7 @@ namespace DotNetBurstComparison.Dotnet.Benchmarks;
 /// Shamelessly borrowed: https://github.com/nxrighthere/BurstBenchmarks
 /// </summary>
 public sealed class Fibonacci : IBenchmark {
-    private const uint Number = 46; // 46
+    private const uint Number = 46;
 
     public Fibonacci() {
         // do nothing
@@ -17,8 +18,8 @@ public sealed class Fibonacci : IBenchmark {
     }
 
     [MethodImpl(MethodImplOptions.NoInlining)]
-    public void Run() {
-        uint result = DoFibonacci(Number);
+    public Result Run() {
+        return DoFibonacci(Number);
     }
 
     private static uint DoFibonacci(uint number) {

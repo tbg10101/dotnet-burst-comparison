@@ -1,4 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
+using DotNetBurstComparison.Runner;
 
 namespace DotNetBurstComparison.Dotnet.Benchmarks;
 
@@ -6,7 +7,7 @@ namespace DotNetBurstComparison.Dotnet.Benchmarks;
 /// Shamelessly borrowed: https://github.com/nxrighthere/BurstBenchmarks
 /// </summary>
 public sealed unsafe class SieveOfEratosthenes : IBenchmark {
-    private const uint Iterations = 1_000_000; // 1_000_000
+    private const uint Iterations = 1_000_000;
 
     public SieveOfEratosthenes() {
         // do nothing
@@ -17,22 +18,21 @@ public sealed unsafe class SieveOfEratosthenes : IBenchmark {
     }
 
     [MethodImpl(MethodImplOptions.NoInlining)]
-    public void Run() {
-        uint result = DoSieveOfEratosthenes(Iterations);
+    public Result Run() {
+        return DoSieveOfEratosthenes(Iterations);
     }
 
     private static uint DoSieveOfEratosthenes(uint iterations) {
         const int size = 1024;
 
-        byte* flags = stackalloc byte[size];
-        uint a, b, c, prime, count = 0;
+        Span<byte> flags = stackalloc byte[size];
+        uint count = 0;
+        int a, b, c, prime;
 
         for (a = 1; a <= iterations; a++) {
             count = 0;
 
-            for (b = 0; b < size; b++) {
-                flags[b] = 1; // True
-            }
+            flags.Fill(1); // True
 
             for (b = 0; b < size; b++) {
                 if (flags[b] == 1) {

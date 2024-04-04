@@ -1,20 +1,17 @@
 using System.Runtime.CompilerServices;
+using DotNetBurstComparison.Runner;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Jobs;
 using Unity.Mathematics;
-using UnityEngine;
 
-namespace DotNetBurstComparison.Unity.Benchmarks {
+namespace DotNetBurstComparison.Unity.Benchmarks.Burst {
     /// <summary>
     /// This is supposed to test a real-world ECS use-case where velocity multiplied by a time delta is added to positions.
     /// </summary>
-    public sealed class Velocity: IBenchmark {
-        private const int ArrayLength = 1_000_000; // 1_000_000
+    public sealed class Velocity : IBenchmark {
+        private const int ArrayLength = 1_000_000;
         private const float TimeDelta = 0.033f;
-
-        private readonly Vector4[] _vectorArrayA = new Vector4[ArrayLength];
-        private readonly Vector4[] _vectorArrayB = new Vector4[ArrayLength];
 
         private readonly NativeArray<float4> _vectorNativeArrayA = new(ArrayLength, Allocator.Persistent);
         private readonly NativeArray<float4> _vectorNativeArrayB = new(ArrayLength, Allocator.Persistent);
@@ -24,13 +21,13 @@ namespace DotNetBurstComparison.Unity.Benchmarks {
             NativeArray<float4> nativeArrayB = _vectorNativeArrayB;
 
             for (int i = 0; i < ArrayLength; i++) {
-                _vectorArrayA[i] = nativeArrayA[i] = new float4(
+                nativeArrayA[i] = new float4(
                     math.sin(4 * i + 0),
                     math.sin(4 * i + 1),
                     math.sin(4 * i + 2),
                     math.sin(4 * i + 3)
                 );
-                _vectorArrayB[i] = nativeArrayB[i] = new float4(
+                nativeArrayB[i] = new float4(
                     math.cos(4 * i + 0),
                     math.cos(4 * i + 1),
                     math.cos(4 * i + 2),
@@ -46,19 +43,8 @@ namespace DotNetBurstComparison.Unity.Benchmarks {
             // ReSharper enable PossiblyImpureMethodCallOnReadonlyVariable
         }
 
-        [BurstDiscard]
         [MethodImpl(MethodImplOptions.NoInlining)]
-        public void RunNonBurst() {
-            Vector4[] a = _vectorArrayA;
-            Vector4[] b = _vectorArrayB;
-
-            for (int i = 0; i < ArrayLength; i++) {
-                a[i] += TimeDelta * b[i];
-            }
-        }
-
-        [MethodImpl(MethodImplOptions.NoInlining)]
-        public void RunBurst() {
+        public Result Run() {
             NativeArray<float4> a = _vectorNativeArrayA;
             NativeArray<float4> b = _vectorNativeArrayB;
 
@@ -68,6 +54,8 @@ namespace DotNetBurstComparison.Unity.Benchmarks {
             };
 
             job.Schedule().Complete();
+
+            return default;
         }
 
         [BurstCompile]

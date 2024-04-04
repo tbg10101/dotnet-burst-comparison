@@ -1,4 +1,5 @@
 ﻿using System.Runtime.CompilerServices;
+using DotNetBurstComparison.Runner;
 
 namespace DotNetBurstComparison.Dotnet.Benchmarks;
 
@@ -8,7 +9,7 @@ namespace DotNetBurstComparison.Dotnet.Benchmarks;
 public sealed class Mandelbrot : IBenchmark {
     private const uint Width = 1920;
     private const uint Height = 1080;
-    private const uint Iterations = 8; // 8
+    private const uint Iterations = 8;
 
     public Mandelbrot() {
         // do nothing
@@ -19,22 +20,22 @@ public sealed class Mandelbrot : IBenchmark {
     }
 
     [MethodImpl(MethodImplOptions.NoInlining)]
-    public void Run() {
-        float result = DoMandelbrot(Width, Height, Iterations);
+    public Result Run() {
+        return DoMandelbrot(Width, Height, Iterations);
     }
 
     private static float DoMandelbrot(uint width, uint height, uint iterations) {
+        const float left = -2.1f;
+        const float right = 1.0f;
+        const float top = -1.3f;
+        const float bottom = 1.3f;
+
         float data = 0.0f;
 
         for (uint i = 0; i < iterations; i++) {
-            float
-                left = -2.1f,
-                right = 1.0f,
-                top = -1.3f,
-                bottom = 1.3f,
-                deltaX = (right - left) / width,
-                deltaY = (bottom - top) / height,
-                coordinateX = left;
+            float deltaX = (right - left) / width;
+            float deltaY = (bottom - top) / height;
+            float coordinateX = left;
 
             for (uint x = 0; x < width; x++) {
                 float coordinateY = top;

@@ -1,103 +1,95 @@
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using DotNetBurstComparison.Unity.Benchmarks;
+using System.IO;
+using System.Text;
+using DotNetBurstComparison.Common.Package;
 using UnityEngine;
-using Debug = UnityEngine.Debug;
 
 namespace DotNetBurstComparison.Unity {
     public static class Program {
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
         private static void Main() {
-            PerformTests(new Func<IBenchmark>[] {
-                () => new LoopVectorization(),
-                () => new Fibonacci(),
-                () => new Mandelbrot(),
-                () => new SieveOfEratosthenes(),
-                () => new VectorMultiplication(),
-                () => new QuaternionMultiplication(),
-                () => new MatrixMultiplication(),
-                () => new Velocity(),
-            });
-        }
+            const string runtime =
+#if ENABLE_MONO
+                "Mono"
+#elif ENABLE_IL2CPP
+                "IL2CPP"
+#endif
+            ;
 
-        private static void PerformTests(IReadOnlyList<Func<IBenchmark>> benchmarkingInitializers) {
-            foreach (Func<IBenchmark> initializer in benchmarkingInitializers) {
-                TestResult result = PerformTest(initializer);
-                Debug.Log(result);
-            }
-        }
+            // redirect Console.out to Unity logs
+            Console.SetOut(new UnityLogWriter());
 
-        private static TestResult PerformTest(Func<IBenchmark> benchmarkingInitializer) {
-            IBenchmark benchmark = benchmarkingInitializer();
+            // NON-BURST BENCHMARKS
+            BenchmarkCollection nonBurstBenchmarkCollection = new(runtime);
 
-            string testName = benchmark.GetType().Name;
-            Stopwatch sw = new();
+            nonBurstBenchmarkCollection.RegisterBenchmark(
+                BenchmarkCollection.BenchmarkTypes.LoopVectorization,
+                () => new Benchmarks.NonBurst.LoopVectorization());
+            nonBurstBenchmarkCollection.RegisterBenchmark(
+                BenchmarkCollection.BenchmarkTypes.Fibonacci,
+                () => new Benchmarks.NonBurst.Fibonacci());
+            nonBurstBenchmarkCollection.RegisterBenchmark(
+                BenchmarkCollection.BenchmarkTypes.Mandelbrot,
+                () => new Benchmarks.NonBurst.Mandelbrot());
+            nonBurstBenchmarkCollection.RegisterBenchmark(
+                BenchmarkCollection.BenchmarkTypes.SieveOfEratosthenes,
+                () => new Benchmarks.NonBurst.SieveOfEratosthenes());
+            nonBurstBenchmarkCollection.RegisterBenchmark(
+                BenchmarkCollection.BenchmarkTypes.VectorMultiplication,
+                () => new Benchmarks.NonBurst.VectorMultiplication());
+            nonBurstBenchmarkCollection.RegisterBenchmark(
+                BenchmarkCollection.BenchmarkTypes.QuaternionMultiplication,
+                () => new Benchmarks.NonBurst.QuaternionMultiplication());
+            nonBurstBenchmarkCollection.RegisterBenchmark(
+                BenchmarkCollection.BenchmarkTypes.MatrixMultiplication,
+                () => new Benchmarks.NonBurst.MatrixMultiplication());
+            nonBurstBenchmarkCollection.RegisterBenchmark(
+                BenchmarkCollection.BenchmarkTypes.Velocity,
+                () => new Benchmarks.NonBurst.Velocity());
 
-            sw.Restart();
-            benchmark.RunNonBurst();
-            sw.Stop();
-            TimeSpan nonBurstElapsedInitial = sw.Elapsed;
+            nonBurstBenchmarkCollection.Run($"{runtime}-results.csv");
 
-            sw.Restart();
-            benchmark.RunNonBurst();
-            sw.Stop();
-            TimeSpan nonBurstElapsed = sw.Elapsed;
+            // BURST BENCHMARKS
+            BenchmarkCollection burstBenchmarkCollection = new($"{runtime}-Burst");
 
-            sw.Restart();
-            benchmark.RunBurst();
-            sw.Stop();
-            TimeSpan burstElapsedInitial = sw.Elapsed;
+            burstBenchmarkCollection.RegisterBenchmark(
+                BenchmarkCollection.BenchmarkTypes.LoopVectorization,
+                () => new Benchmarks.Burst.LoopVectorization());
+            burstBenchmarkCollection.RegisterBenchmark(
+                BenchmarkCollection.BenchmarkTypes.Fibonacci,
+                () => new Benchmarks.Burst.Fibonacci());
+            burstBenchmarkCollection.RegisterBenchmark(
+                BenchmarkCollection.BenchmarkTypes.Mandelbrot,
+                () => new Benchmarks.Burst.Mandelbrot());
+            burstBenchmarkCollection.RegisterBenchmark(
+                BenchmarkCollection.BenchmarkTypes.SieveOfEratosthenes,
+                () => new Benchmarks.Burst.SieveOfEratosthenes());
+            burstBenchmarkCollection.RegisterBenchmark(
+                BenchmarkCollection.BenchmarkTypes.VectorMultiplication,
+                () => new Benchmarks.Burst.VectorMultiplication());
+            burstBenchmarkCollection.RegisterBenchmark(
+                BenchmarkCollection.BenchmarkTypes.QuaternionMultiplication,
+                () => new Benchmarks.Burst.QuaternionMultiplication());
+            burstBenchmarkCollection.RegisterBenchmark(
+                BenchmarkCollection.BenchmarkTypes.MatrixMultiplication,
+                () => new Benchmarks.Burst.MatrixMultiplication());
+            burstBenchmarkCollection.RegisterBenchmark(
+                BenchmarkCollection.BenchmarkTypes.Velocity,
+                () => new Benchmarks.Burst.Velocity());
 
-            sw.Restart();
-            benchmark.RunBurst();
-            sw.Stop();
-            TimeSpan burstElapsed = sw.Elapsed;
-
-            benchmark.Dispose();
-
-            return new TestResult(
-                testName,
-                nonBurstElapsedInitial,
-                nonBurstElapsed,
-                burstElapsedInitial,
-                burstElapsed);
+            burstBenchmarkCollection.Run($"{runtime}-Burst-results.csv");
         }
     }
 
-    public readonly struct TestResult {
-        public readonly string TestName;
+    internal class UnityLogWriter : TextWriter {
+        public override Encoding Encoding => Encoding.UTF8;
 
-        public readonly TimeSpan ElapsedTimeNonBurstInitial;
-        public readonly TimeSpan ElapsedTimeNonBurst;
-
-        public readonly TimeSpan ElapsedTimeBurstInitial;
-        public readonly TimeSpan ElapsedTimeBurst;
-
-        public TestResult(
-            string testName,
-            TimeSpan elapsedTimeNonBurstInitial,
-            TimeSpan elapsedTimeNonBurst,
-            TimeSpan elapsedTimeBurstInitial,
-            TimeSpan elapsedTimeBurst
-        ) {
-            TestName = testName;
-
-            ElapsedTimeNonBurstInitial = elapsedTimeNonBurstInitial;
-            ElapsedTimeNonBurst = elapsedTimeNonBurst;
-
-            ElapsedTimeBurstInitial = elapsedTimeBurstInitial;
-            ElapsedTimeBurst = elapsedTimeBurst;
+        public override void WriteLine() {
+            Debug.Log("");
         }
 
-        public override string ToString() {
-            return $"{TestName}\n" +
-                   $"    Non-Burst: {FormatTimeSpan(ElapsedTimeNonBurstInitial)} | {FormatTimeSpan(ElapsedTimeNonBurst)}\n" +
-                   $"    Burst: {FormatTimeSpan(ElapsedTimeBurstInitial)} | {FormatTimeSpan(ElapsedTimeBurst)}";
-        }
-
-        private static string FormatTimeSpan(TimeSpan duration) {
-            return duration.Ticks.ToString("N0");
+        public override void WriteLine(string value) {
+            Debug.Log($"{value}");
         }
     }
 }

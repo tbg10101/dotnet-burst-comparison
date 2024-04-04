@@ -1,0 +1,25 @@
+{
+  "name": "com.10101software.dotnetburstcomparison.common",
+  "displayName": ".NET Comparison Benchmark Common Components",
+  "description": "Common components for the benchmarks.",
+  "version": "1.0.0",
+  "unity": "2022.3",
+  "dependencies": {
+    "com.10101software.dotnetburstcomparison.runner": "1.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tbg10101/dotnet-burst-comparison.git"
+  },
+  "keywords": [
+    "10101",
+    "benchmark",
+    ".NET"
+  ],
+  "author": {
+    "name": "10101 Software",
+    "email": "10101software@gmail.com",
+    "url": "https://www.10101software.com/"
+  },
+  "type": "library"
+}

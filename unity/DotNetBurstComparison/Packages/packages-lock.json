@@ -1,5 +1,19 @@
 {
   "dependencies": {
+    "com.10101software.dotnetburstcomparison.common": {
+      "version": "file:D:/projects/dotnet-burst-comparison/dotnet/DotNetBurstComparison/DotNetBurstComparison.Common/Package",
+      "depth": 0,
+      "source": "local",
+      "dependencies": {
+        "com.10101software.dotnetburstcomparison.runner": "1.0.0"
+      }
+    },
+    "com.10101software.dotnetburstcomparison.runner": {
+      "version": "file:../../../dotnet/DotNetBurstComparison/DotNetBurstComparison.Runner/Package",
+      "depth": 0,
+      "source": "local",
+      "dependencies": {}
+    },
     "com.unity.burst": {
       "version": "1.8.13",
       "depth": 0,
