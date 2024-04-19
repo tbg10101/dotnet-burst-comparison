@@ -20,6 +20,8 @@ These instructions are written assuming you are running Windows on an x86_64 CPU
 
 All commands are executed from the repository root.
 
+IMPORTANT: ensure that your runtime envrironment is as quiet as possible. This means closing all applications and asx many background tasks as possible. I also disconnect my computer from the Internet while running these to prevent network-initialted work from starting. I have also found that certain tasks will start when the user is deemed to be idle. I used a program to move my cursor every 15 seconds to prevent such tasks from starting.
+
 ### Unity Project
 
 Download the version of unity specified in `unity\DotNetBurstComparison\ProjectSettings\ProjectVersion.txt`. Don't forget to also install the IL2CPP module.
@@ -27,7 +29,7 @@ Download the version of unity specified in `unity\DotNetBurstComparison\ProjectS
 Build the Unity project by opening the Unity project and use the Build > Windows menu item or this command:
 
 ```
-"C:\Program Files\Unity\Hub\Editor\2023.2.16f1\Editor\Unity.exe" -batchmode -nographics -quit -projectPath unity\DotNetBurstComparison -executeMethod Editor.Build.BuildWindows -logfile unity\DotNetBurstComparison\Builds\Windows\log.txt
+"C:\Program Files\Unity\Hub\Editor\2023.2.19f1\Editor\Unity.exe" -batchmode -nographics -quit -projectPath unity\DotNetBurstComparison -executeMethod Editor.Build.BuildWindows -logfile unity\DotNetBurstComparison\Builds\Windows\log.txt
 ```
 
 To run the Mono Unity program:
@@ -83,7 +85,8 @@ Smaller values are better in the graphs below.
 The computer running these tests:
 * CPU: Intel Core i9 9900K @ 5GHz (all cores)
 * Memory: 32GB DDR4 @ 3200MHz
-* OS: Windows 10 Version 10.0.19045 Build 19045
+* OS (from `dxdiag`): Windows 10 Pro 64-bit (10.0, Build 19045)
+* .NET (`dotnet --version`): 8.0.204
 
 ### Conclusions
 

@@ -15,7 +15,7 @@
       "dependencies": {}
     },
     "com.unity.burst": {
-      "version": "1.8.13",
+      "version": "1.8.14",
       "depth": 0,
       "source": "registry",
       "dependencies": {
